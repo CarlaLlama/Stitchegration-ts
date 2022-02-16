@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "baseUrl": "./",
+    "lib": [
+      "es2015",
+      "es2017",
+      "dom",
+      "esnext.asynciterable"
+    ],
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "src",
+  ]
+}
