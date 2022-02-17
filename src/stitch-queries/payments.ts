@@ -2,7 +2,7 @@ import Decimal from "decimal.js";
 import { fetchGraphQL } from "src/services/fetch-gql";
 import { Money, SupportedCurrency } from "src/utils/types";
 
-export async function requestPayment(amount: Decimal, currency: SupportedCurrency){
+export async function requestPayment(accessToken: string, amount: Decimal, currency: SupportedCurrency){
 const operationsDoc = `
     mutation CreatePaymentRequest($amount: MoneyInput!, $payerReference: String!, $beneficiaryReference: String!, $externalReference: String, $beneficiaryName: String!, $beneficiaryBankId: BankBeneficiaryBankId!, $beneficiaryAccountNumber: String!) {
     clientPaymentInitiationRequestCreate(input: {amount: $amount, payerReference: $payerReference, beneficiaryReference: $beneficiaryReference, externalReference: $externalReference, beneficiary: {bankAccount: {name: $beneficiaryName, bankId: $beneficiaryBankId, accountNumber: $beneficiaryAccountNumber}}}) {
@@ -27,12 +27,12 @@ const variables = {
     "beneficiaryAccountNumber": "4082314247",
 }
 
-let results = await fetchGraphQL(operationsDoc, 'CreatePaymentRequest', variables);
+let results = await fetchGraphQL(accessToken, operationsDoc, 'CreatePaymentRequest', variables);
 return results;
 }
 
 
-export async function requestUserConstrainedPayment(amount: Money, id){
+export async function requestUserConstrainedPayment(accessToken: string, amount: Money, id: string){
 const operationsDoc = `
 mutation CreatePaymentRequest($amount: MoneyInput!, $payerReference: String!, $beneficiaryReference: String!, $beneficiaryName: String!, $beneficiaryBankId: BankBeneficiaryBankId!, $beneficiaryAccountNumber: String!, $payerBankAccountId: ID!) {
     userPaymentInitiationRequestCreate(input: {amount: $amount, payerReference: $payerReference, beneficiaryReference: $beneficiaryReference, beneficiary: {bankAccount: {name: $beneficiaryName, bankId: $beneficiaryBankId, accountNumber: $beneficiaryAccountNumber}}, payerConstraint: {bankAccount: {accountId: $payerBankAccountId}}}) {
@@ -57,12 +57,12 @@ const variables = {
     "payerBankAccountId": id
 }
 
-let results = await fetchGraphQL(operationsDoc, 'CreatePaymentRequest', variables);
+let results = await fetchGraphQL(accessToken, operationsDoc, 'CreatePaymentRequest', variables);
 return results;
 }
 
 
-export async function getPaymentStatus(id){
+export async function getPaymentStatus(accessToken: string, paymentRequestId: string){
 const operationsDoc = `
 query GetPaymentRequestStatus($paymentRequestId: ID!) {
     node(id: $paymentRequestId) {
@@ -105,9 +105,9 @@ query GetPaymentRequestStatus($paymentRequestId: ID!) {
 `;
 
 const variables = {
-    "paymentRequestId": id
+    "paymentRequestId": paymentRequestId
 };
 
-let results = await fetchGraphQL(operationsDoc, 'GetPaymentRequestStatus', variables);
+let results = await fetchGraphQL(accessToken, operationsDoc, 'GetPaymentRequestStatus', variables);
 return results;
 }
